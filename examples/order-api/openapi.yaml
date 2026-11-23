@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: Example Order API
+  version: 1.0.0
+paths:
+  /orders:
+    parameters:
+      - name: X-Request-Id
+        in: header
+        description: Optional request identifier.
+        schema:
+          type: string
+    post:
+      operationId: createOrder
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrder'
+      responses:
+        '201':
+          description: Order created.
+components:
+  parameters:
+    RequestId:
+      name: X-Request-Id
+      in: header
+      description: Request identifier for order creation.
+      schema:
+        type: string
+  schemas:
+    CreateOrder:
+      type: object
+      required: [productId]
+      properties:
+        productId:
+          type: string
+        currency:
+          type: string
+          enum: [USD, EUR]

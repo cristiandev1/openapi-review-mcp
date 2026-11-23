@@ -1,0 +1,38 @@
+name: Acceptance checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned oasdiff
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=1.39.0
+          asset="oasdiff_${version}_linux_amd64.tar.gz"
+          download_dir="$RUNNER_TEMP/oasdiff"
+          mkdir -p "$download_dir"
+          cd "$download_dir"
+          curl --fail --silent --show-error --location --retry 3 \
+            --remote-name "https://github.com/oasdiff/oasdiff/releases/download/v${version}/$asset"
+          curl --fail --silent --show-error --location --retry 3 \
+            --remote-name "https://github.com/oasdiff/oasdiff/releases/download/v${version}/checksums.txt"
+          grep -F "  $asset" checksums.txt | sha256sum --check -
+          tar -xzf "$asset" oasdiff
+          echo "$download_dir" >> "$GITHUB_PATH"
+      - run: npm ci
+      - run: npm run check
