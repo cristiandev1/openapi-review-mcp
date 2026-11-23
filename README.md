@@ -72,6 +72,7 @@ workspace-root portable Copilot configuration is `.mcp.json`.
 | Environment | Verification |
 | --- | --- |
 | MCP TypeScript SDK client | [Verified in GitHub Actions](https://github.com/cristiandev1/openapi-review-mcp/actions/runs/45102486299) with oasdiff 1.39.0 |
+| Contract scenario suite | Run `npm run eval:contracts`; included in `npm run check`. See [evaluation results](docs/evaluation-results.md). |
 | Codex | Setup documented. Native host run pending. |
 | Claude Code | Setup documented. Native host run pending. |
 | GitHub Copilot in VS Code | Setup documented. Native host run pending. |
@@ -79,7 +80,8 @@ workspace-root portable Copilot configuration is `.mcp.json`.
 ## Reproduce the review
 
 From this repository, run `npm run demo`. The command prints a new temporary
-Git worktree with `main`, `compatible`, and `feature/require-currency` branches.
+Git worktree with `main`, `compatible`, `feature/require-currency`, and
+`feature/remove-order-operation` branches.
 Use that directory as the server's `--repo` path and open it as the assistant's
 workspace. Submit the prompt above.
 
@@ -90,6 +92,29 @@ Expected evidence:
 2. Comparing `main` with `compatible` returns no breaking changes or warnings.
 3. The demo's `client.mjs` still sends only `productId`. The assistant should cite
    that file when it explains the change needed by this caller.
+4. `feature/remove-order-operation` removes `POST /orders` and is reported as a
+   breaking change.
+
+## Contract scenario evaluation
+
+The checked-in [scenario manifest](examples/order-api/scenarios.json) defines
+synthetic compatible, required-field, and removed-operation cases. Run the
+focused suite with:
+
+```sh
+npm run eval:contracts
+```
+
+The suite starts the built MCP server through the TypeScript SDK stdio client,
+checks structured tool results against each scenario, and confirms that the
+required-field fixture still contains its outdated consumer. It is included in
+`npm run check`. These automated checks validate the server and its fixtures;
+they do not measure whether an LLM host finds or cites a caller correctly.
+
+Record native host runs separately in
+[`docs/evaluation-results.md`](docs/evaluation-results.md). Include the host,
+date, actual tool calls, contract finding, and exact workspace file and line.
+Keep pending status until a run has actually been completed.
 
 ## Tool contracts
 
@@ -110,11 +135,12 @@ remote execution, and hosted transports are outside this version's scope.
 
 ## How it is built
 
-The [specification](specs/001-contract-review/spec.md) defines the result and
-acceptance criteria. The [plan](specs/001-contract-review/plan.md) records the
-implementation decisions. The [tasks](specs/001-contract-review/tasks.md) trace
-them to tests. [AGENTS.md](AGENTS.md) is the entry point for coding agents, and
-[CHANGELOG.md](CHANGELOG.md) tracks user-facing changes.
+The specifications under `specs/` define behavior and acceptance criteria. The
+plans record implementation decisions, and task lists trace requirements to
+tests. [AGENTS.md](AGENTS.md) is the entry point for coding agents,
+[CHANGELOG.md](CHANGELOG.md) tracks user-facing changes, and
+[`docs/evaluation-results.md`](docs/evaluation-results.md) distinguishes
+automated evidence from native host observations.
 
 Run `npm run check` to build and run the full suite against an installed oasdiff.
 Use `SKIP_REAL_OASDIFF=1 npm run check` only to exercise the remaining cases

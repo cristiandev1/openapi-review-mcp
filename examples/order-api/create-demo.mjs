@@ -28,6 +28,19 @@ export function createDemo(directory = mkdtempSync(join(tmpdir(), "openapi-revie
   git("switch", "-qc", "feature/require-currency");
   writeFileSync(specPath, compatible.replace("required: [productId]", "required: [productId, currency]"));
   git("commit", "-qam", "Require currency when creating orders");
+
+  git("switch", "-q", "compatible");
+  git("switch", "-qc", "feature/remove-order-operation");
+  const withoutOrderOperation = compatible.replace(
+    /paths:\n  \/orders:[\s\S]*?\ncomponents:/,
+    "paths: {}\ncomponents:",
+  );
+  if (withoutOrderOperation === compatible) {
+    throw new Error("Could not remove the order operation from the demo contract.");
+  }
+  writeFileSync(specPath, withoutOrderOperation);
+  git("commit", "-qam", "Remove the order creation operation");
+  git("switch", "-q", "feature/require-currency");
   return root;
 }
 

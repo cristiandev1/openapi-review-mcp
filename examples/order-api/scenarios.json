@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "id": "compatible-version-change",
+      "description": "Changing only the informational API version has no compatibility findings.",
+      "specPath": "openapi.yaml",
+      "baseRef": "main",
+      "headRef": "compatible",
+      "expected": {
+        "hasBreakingChanges": false,
+        "findingCount": 0
+      }
+    },
+    {
+      "id": "new-required-request-field",
+      "description": "Requiring currency breaks a caller that still sends only productId.",
+      "specPath": "openapi.yaml",
+      "baseRef": "main",
+      "headRef": "feature/require-currency",
+      "expected": {
+        "hasBreakingChanges": true,
+        "finding": {
+          "severity": "breaking",
+          "method": "POST",
+          "path": "/orders",
+          "descriptionIncludes": "currency"
+        }
+      },
+      "inspect": {
+        "ref": "feature/require-currency",
+        "method": "POST",
+        "path": "/orders",
+        "expectedRequiredFields": ["productId", "currency"]
+      },
+      "consumer": {
+        "path": "client.mjs",
+        "stalePayloadSnippet": "JSON.stringify({ productId })",
+        "missingField": "currency"
+      }
+    },
+    {
+      "id": "removed-operation",
+      "description": "Removing POST /orders is breaking and makes the operation unavailable at the head revision.",
+      "specPath": "openapi.yaml",
+      "baseRef": "main",
+      "headRef": "feature/remove-order-operation",
+      "expected": {
+        "hasBreakingChanges": true,
+        "finding": {
+          "severity": "breaking",
+          "path": "/orders"
+        }
+      },
+      "inspect": {
+        "ref": "feature/remove-order-operation",
+        "method": "POST",
+        "path": "/orders",
+        "expectedErrorCode": "ENDPOINT_NOT_FOUND"
+      }
+    }
+  ]
+}
