@@ -7,12 +7,11 @@
 - [x] T-205 Add an evaluation command and keep scenarios in the full check.
 - [x] T-206 Document automated evidence separately from native-host observations.
 - [x] T-207 Run the build and tests that do not require oasdiff; record skipped comparisons and the local dependency blocker.
-- [ ] T-208 Run all three comparison scenarios with oasdiff 1.39.0.
+- [x] T-208 Run all three comparison scenarios with oasdiff 1.39.0.
 
 ## Verification evidence
 
-`SKIP_REAL_OASDIFF=1 npm run eval:contracts`: 4 passed, 3 skipped, 0 failed.
-`SKIP_REAL_OASDIFF=1 npm run check`: 9 passed, 4 skipped, 0 failed. The skipped
-cases require oasdiff. T-208 and all native host checks remain pending.
-Native host evidence is tracked in
-[`docs/evaluation-results.md`](../../docs/evaluation-results.md).
+`OASDIFF_BIN=/opt/homebrew/opt/oasdiff@1.39.0/bin/oasdiff npm run eval:contracts`:
+7 passed, 0 skipped, 0 failed. The full check passed 13 tests with no skips.
+`brew test oasdiff@1.39.0` passed. Native host checks remain pending and are
+tracked in [`docs/evaluation-results.md`](../../docs/evaluation-results.md).

@@ -8,25 +8,24 @@ contracts and client code are synthetic.
 
 | Field | Result |
 | --- | --- |
-| Status | Partial local verification; the comparison cases were skipped |
-| Commands | `SKIP_REAL_OASDIFF=1 npm run eval:contracts`; `SKIP_REAL_OASDIFF=1 npm run check` |
+| Status | Passed locally |
+| Commands | `OASDIFF_BIN=/opt/homebrew/opt/oasdiff@1.39.0/bin/oasdiff npm run eval:contracts`; `OASDIFF_BIN=/opt/homebrew/opt/oasdiff@1.39.0/bin/oasdiff npm run check` |
 | Transport | MCP TypeScript SDK client over stdio |
 | Runtime | Node.js 22.16.0; npm 10.9.2 |
-| Compatibility engine | Required: oasdiff 1.39.0; unavailable locally |
+| Compatibility engine | oasdiff 1.39.0, installed with a local Homebrew formula from the official macOS release asset |
 | Scenarios | Compatible version change; required request field; removed operation |
 | Scope | Structured server results, operation lookup, and the intentionally outdated fixture |
 
-On 2026-11-23, the focused suite reported 4 passed, 3 skipped, and 0 failed.
-The full check reported 9 passed, 4 skipped, and 0 failed. Build, manifest
-validation, operation inspection, and the stale consumer fixture passed. All
-three compatibility comparisons were skipped because `oasdiff` was not on the
-local `PATH`. A download attempt failed with `curl: (6) Could not resolve host:
-github.com`, so no oasdiff comparison result is claimed for this local run.
-GitHub Actions installs the pinned 1.39.0 binary and runs `npm run check`.
+On 2026-11-23, `npm run eval:contracts` reported 7 passed, 0 skipped, and 0
+failed. The full `npm run check` reported 13 passed, 0 skipped, and 0 failed.
+`brew test oasdiff@1.39.0` also passed, and the binary reported
+`oasdiff version 1.39.0`. The installed formula uses the official release asset
+with SHA-256 `fe88d9950324d3b0ebeaf8e0d3a210b64cb099a0f55fce5ee5a22b276df0eac4`.
+GitHub Actions independently installs the pinned 1.39.0 binary and runs
+`npm run check`.
 
-The focused suite must not be described as an LLM or native-host evaluation.
-Run it without `SKIP_REAL_OASDIFF=1` after installing the pinned engine to
-complete the comparison scenarios.
+The focused suite validates deterministic MCP output and fixtures. It is not an
+LLM or native-host evaluation.
 
 ## Native host review
 
