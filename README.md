@@ -71,10 +71,10 @@ workspace-root portable Copilot configuration is `.mcp.json`.
 
 | Environment | Verification |
 | --- | --- |
-| MCP TypeScript SDK client | Automated stdio acceptance suite |
-| Codex | Setup documented |
-| Claude Code | Setup documented |
-| GitHub Copilot in VS Code | Setup documented |
+| MCP TypeScript SDK client | [Verified in GitHub Actions](https://github.com/cristiandev1/openapi-review-mcp/actions/runs/45102486299) with oasdiff 1.39.0 |
+| Codex | Setup documented. Native host run pending. |
+| Claude Code | Setup documented. Native host run pending. |
+| GitHub Copilot in VS Code | Setup documented. Native host run pending. |
 
 ## Reproduce the review
 
