@@ -11,3 +11,5 @@ Released versions appear newest first, with dates in YYYY-MM-DD format.
 - Added source locations for compatibility findings and immutable Git commit IDs for reproducible reviews.
 - Added setup guides for Codex, Claude Code, and GitHub Copilot in VS Code.
 - Added a reproducible order API demo and stdio acceptance tests.
+- Added a scenario-driven contract evaluation suite for compatible changes, required request fields, and removed operations.
+- Added documentation that separates automated MCP evidence from native host observations.
